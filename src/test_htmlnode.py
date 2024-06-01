@@ -52,6 +52,10 @@ def create_test_textnode_link():
     textnode = TextNode("This is a link test node", "link", "www.google.com")
     return textnode
 
+def create_test_textnode_image():
+    textnode = TextNode("This is the alt text", "image", "http://i-died-at-your=house.com/img-1")
+    return textnode
+
 class TestHTMLNode(unittest.TestCase):
     def test_print(self):
         node = HTMLNode("<div>", "test value", None, None)
@@ -71,10 +75,6 @@ class TestHTMLNode(unittest.TestCase):
         parent_node = HTMLNode("<div>", "test value", [child_node_one, child_node_two], None)
         self.assertEqual(len(parent_node.children), 2)
         self.assertEqual(parent_node.children, [child_node_one, child_node_two])
-
-    def test_leafnode_value_error(self):
-        with self.assertRaises(ValueError):
-            LeafNode("div", None, None)
       
     def test_leafnode_no_tag(self):
         leafnode_html = create_one_leaf_no_tag().to_html()
@@ -159,10 +159,9 @@ class TestHTMLNode(unittest.TestCase):
         text_node_to_html = text_node_to_html_node(create_test_textnode_link()).to_html()
         self.assertEqual(text_node_to_html, "<a href=\"www.google.com\">This is a link test node</a>")
     
-        
-    
-    
-
+    def test_image_textnode(self):
+        text_node_to_html = text_node_to_html_node(create_test_textnode_image()).to_html()
+        self.assertEqual(text_node_to_html, "<img src=\"http://i-died-at-your=house.com/img-1\" alt=\"This is the alt text\"></img>")
 
 
 if __name__ == '__main__':

@@ -22,21 +22,22 @@ def checkParentNode(tag, children):
         raise ValueError("ParentNode must have children")
     
 def text_node_to_html_node(text_node):
-    if text_node.text_type == None or text_node.text_type == "":
-        raise Exception("type passed into textnode not valid")
-    if text_node.text_type.lower() not in ["text", "bold", "italic", "code", "link", "image"]:
-        raise Exception("type passed into textnode not valid")
     
-    if text_node.text_type.lower() == "text":
+    text_node.text_type = text_node.text_type.lower()
+    
+    if text_node.text_type == "text":
         return (LeafNode(None, text_node.text, text_node.url))
-    if text_node.text_type.lower() == "bold":
+    if text_node.text_type == "bold":
         return(LeafNode("b", text_node.text, text_node.url))
-    if text_node.text_type.lower() == "italic":
+    if text_node.text_type == "italic":
         return(LeafNode("i", text_node.text, text_node.url))
-    if text_node.text_type.lower() == "code":
+    if text_node.text_type == "code":
         return(LeafNode("code", text_node.text, text_node.url))
-    if text_node.text_type.lower() == "link":
+    if text_node.text_type == "link":
         return(LeafNode("a", text_node.text, {"href": text_node.url}))
+    if text_node.text_type == "image":
+        return (LeafNode("img", "", {"src": text_node.url, "alt": text_node.text}))
+    raise Exception("type passed into textnode not valid")
 
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
@@ -61,8 +62,6 @@ class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
         super().__init__(tag=tag, value=value, props=props)
 
-        if self.value == None or self.value == "":
-            raise ValueError("Leaf node must have a value")
         if self.tag == "a" and self.props["href"] == None:
             raise ValueError("nodes with tag <a> must have a value for props[\"href\"]")
     
