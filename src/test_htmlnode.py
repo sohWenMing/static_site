@@ -1,7 +1,8 @@
 import unittest
 from io import StringIO
 import sys 
-from htmlnode import HTMLNode, LeafNode, ParentNode
+from htmlnode import HTMLNode, LeafNode, ParentNode, text_node_to_html_node
+from textnode import TextNode
 
 def create_one_leaf_no_tag():
     leafnode = LeafNode(None, "this is a div", None)
@@ -30,11 +31,26 @@ def create_nested_parent():
     return parent_node
 
 def printToIO(node):
+    original_stdout = sys.stdout 
     captured_output = StringIO()
-    sys.stdout = captured_output
-    print(node)
-    printed_output = captured_output.getvalue().strip()
+    try:
+        sys.stdout = captured_output
+        print(node)
+        printed_output = captured_output.getvalue().strip()
+    finally:
+        sys.stdout = original_stdout
     return printed_output
+
+wrong_text_types = [None, "", "href"]
+upper_text_types = ["TEXT", "BOLD", "ITALIC", "CODE", "LINK", "IMAGE"]
+
+def create_test_textnode_by_type(text_type):
+    textnode = TextNode("This is a test text node", text_type, None)
+    return textnode
+
+def create_test_textnode_link():
+    textnode = TextNode("This is a link test node", "link", "www.google.com")
+    return textnode
 
 class TestHTMLNode(unittest.TestCase):
     def test_print(self):
@@ -59,8 +75,7 @@ class TestHTMLNode(unittest.TestCase):
     def test_leafnode_value_error(self):
         with self.assertRaises(ValueError):
             LeafNode("div", None, None)
-     
-    
+      
     def test_leafnode_no_tag(self):
         leafnode_html = create_one_leaf_no_tag().to_html()
         expected_value = "this is a div"
@@ -114,17 +129,44 @@ class TestHTMLNode(unittest.TestCase):
         to_html = parent_node.to_html()
         self.assertEqual(to_html, "<div><div><div>this is a div</div></div><div><div>this is a div</div></div></div>")
    
-                         
-
-
+    def test_text_node_to_html_exceptions(self):
+       for type in wrong_text_types:
+           with self.assertRaises(Exception):
+               text_node_to_html_node(create_test_textnode_by_type(type))
     
+    def test_upper_text_types(self):
+        for type in upper_text_types:
+            create_test_textnode_by_type(type)
 
+    def test_text_textnode(self):
+        text_textnode_to_html = text_node_to_html_node((create_test_textnode_by_type("text"))).to_html()
+        self.assertEqual(text_textnode_to_html, "This is a test text node")
+
+    def test_bold_textnode(self):
+        text_node_to_html = text_node_to_html_node(create_test_textnode_by_type("bold")).to_html()
+        self.assertEqual(text_node_to_html, "<b>This is a test text node</b>")
+
+    def test_bold_textnode(self):
+        text_node_to_html = text_node_to_html_node(create_test_textnode_by_type("italic")).to_html()
+        self.assertEqual(text_node_to_html, "<i>This is a test text node</i>")
+
+    def test_bold_textnode(self):
+        text_node_to_html = text_node_to_html_node(create_test_textnode_by_type("code")).to_html()
+        self.assertEqual(text_node_to_html, "<code>This is a test text node</code>")
+        test = text_node_to_html_node(create_test_textnode_by_type("code"))
+    
+    def test_link_textnode(self):
+        text_node_to_html = text_node_to_html_node(create_test_textnode_link()).to_html()
+        self.assertEqual(text_node_to_html, "<a href=\"www.google.com\">This is a link test node</a>")
     
         
-        
+    
+    
+
+
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(buffer=False)
 
 
     

@@ -1,8 +1,42 @@
+from textnode import TextNode
+
+# class TextNode:
+#     def __init__(self, text, text_type, url=None):
+#         self.text = text
+#         self.text_type = text_type
+#         self.url = url
+
+#     def __eq__(self, other):
+#         if self.text == other.text and self.text_type == other.text_type and self.url == other.url:
+#             return True
+#         else:
+#             return False
+    
+#     def __repr__(self):
+#         return f"TextNode({self.text}, {self.text_type}, {self.url})"
+
 def checkParentNode(tag, children):
     if tag == None:
         raise ValueError("Parent node must have a tag")
     if children == [] or children == None:
         raise ValueError("ParentNode must have children")
+    
+def text_node_to_html_node(text_node):
+    if text_node.text_type == None or text_node.text_type == "":
+        raise Exception("type passed into textnode not valid")
+    if text_node.text_type.lower() not in ["text", "bold", "italic", "code", "link", "image"]:
+        raise Exception("type passed into textnode not valid")
+    
+    if text_node.text_type.lower() == "text":
+        return (LeafNode(None, text_node.text, text_node.url))
+    if text_node.text_type.lower() == "bold":
+        return(LeafNode("b", text_node.text, text_node.url))
+    if text_node.text_type.lower() == "italic":
+        return(LeafNode("i", text_node.text, text_node.url))
+    if text_node.text_type.lower() == "code":
+        return(LeafNode("code", text_node.text, text_node.url))
+    if text_node.text_type.lower() == "link":
+        return(LeafNode("a", text_node.text, {"href": text_node.url}))
 
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
@@ -24,18 +58,20 @@ class HTMLNode:
         return f"Tag: {self.tag} Value: {self.value} Children: {self.children} Props: {self.props}" 
 
 class LeafNode(HTMLNode):
-    def __init__(self, tag, value, props):
+    def __init__(self, tag, value, props=None):
         super().__init__(tag=tag, value=value, props=props)
 
         if self.value == None or self.value == "":
             raise ValueError("Leaf node must have a value")
+        if self.tag == "a" and self.props["href"] == None:
+            raise ValueError("nodes with tag <a> must have a value for props[\"href\"]")
     
     def to_html(self):
         if self.tag == None:
             return self.value
-        if self.tag != None and self.props == None:
+        if self.tag != None and self.props == {}:
             return f"<{self.tag}>{self.value}</{self.tag}>"
-        if self.tag != None and self.props != None:
+        if self.tag != None and self.props != {}:
             props_string = self.props_to_html()
             return f"<{self.tag} {props_string}>{self.value}</{self.tag}>"
     
