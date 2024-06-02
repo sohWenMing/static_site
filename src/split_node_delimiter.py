@@ -18,7 +18,6 @@ def flatten_array(array):
 
 def split_nodes_text(node, delimiter):
     split_list = node.text.split(delimiter)
-    print("split list: ", split_list)
     if len(split_list) % 2 == 0:
         raise Exception("Invalid markdown syntax")
     for i in range(0, len(split_list)):
@@ -59,6 +58,3 @@ node = TextNode("**This** *is* some `text`", "text")
 parentNode = ParentNode("div", [node], None)
 
 
-
-print(get_textnode_list(node))
-print(split_nodes_delimiter([parentNode, node]))
