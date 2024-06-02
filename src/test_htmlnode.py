@@ -1,7 +1,7 @@
 import unittest
 from io import StringIO
 import sys 
-from htmlnode import HTMLNode, LeafNode, ParentNode, text_node_to_html_node
+from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode
 
 def create_one_leaf_no_tag():
@@ -45,7 +45,7 @@ wrong_text_types = [None, "", "href"]
 upper_text_types = ["TEXT", "BOLD", "ITALIC", "CODE", "LINK", "IMAGE"]
 
 def create_test_textnode_by_type(text_type):
-    textnode = TextNode("This is a test text node", text_type, None)
+    textnode = TextNode("This is a test text node", text_type, "www.google.com")
     return textnode
 
 def create_test_textnode_link():
@@ -132,35 +132,35 @@ class TestHTMLNode(unittest.TestCase):
     def test_text_node_to_html_exceptions(self):
        for type in wrong_text_types:
            with self.assertRaises(Exception):
-               text_node_to_html_node(create_test_textnode_by_type(type))
+             (create_test_textnode_by_type(type)).text_node_to_html_node()
     
     def test_upper_text_types(self):
         for type in upper_text_types:
-            create_test_textnode_by_type(type)
+            create_test_textnode_by_type(type).text_node_to_html_node()
 
     def test_text_textnode(self):
-        text_textnode_to_html = text_node_to_html_node((create_test_textnode_by_type("text"))).to_html()
+        text_textnode_to_html = ((create_test_textnode_by_type("text"))).text_node_to_html_node().to_html()
         self.assertEqual(text_textnode_to_html, "This is a test text node")
 
     def test_bold_textnode(self):
-        text_node_to_html = text_node_to_html_node(create_test_textnode_by_type("bold")).to_html()
+        text_node_to_html = (create_test_textnode_by_type("bold")).text_node_to_html_node().to_html()
         self.assertEqual(text_node_to_html, "<b>This is a test text node</b>")
 
     def test_bold_textnode(self):
-        text_node_to_html = text_node_to_html_node(create_test_textnode_by_type("italic")).to_html()
+        text_node_to_html = (create_test_textnode_by_type("italic")).text_node_to_html_node().to_html()
         self.assertEqual(text_node_to_html, "<i>This is a test text node</i>")
 
     def test_bold_textnode(self):
-        text_node_to_html = text_node_to_html_node(create_test_textnode_by_type("code")).to_html()
+        text_node_to_html = (create_test_textnode_by_type("code")).text_node_to_html_node().to_html()
         self.assertEqual(text_node_to_html, "<code>This is a test text node</code>")
-        test = text_node_to_html_node(create_test_textnode_by_type("code"))
+        test = (create_test_textnode_by_type("code"))
     
     def test_link_textnode(self):
-        text_node_to_html = text_node_to_html_node(create_test_textnode_link()).to_html()
+        text_node_to_html = (create_test_textnode_link()).text_node_to_html_node().to_html()
         self.assertEqual(text_node_to_html, "<a href=\"www.google.com\">This is a link test node</a>")
     
     def test_image_textnode(self):
-        text_node_to_html = text_node_to_html_node(create_test_textnode_image()).to_html()
+        text_node_to_html = (create_test_textnode_image()).text_node_to_html_node().to_html()
         self.assertEqual(text_node_to_html, "<img src=\"http://i-died-at-your=house.com/img-1\" alt=\"This is the alt text\"></img>")
 
 
