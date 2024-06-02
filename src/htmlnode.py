@@ -1,27 +1,5 @@
-def checkParentNode(tag, children):
-    if tag == None:
-        raise ValueError("Parent node must have a tag")
-    if children == [] or children == None:
-        raise ValueError("ParentNode must have children")
+from node_functions.validations import checkParentNode 
     
-# def text_node_to_html_node(text_node):
-    
-#     text_node.text_type = text_node.text_type.lower()
-    
-#     if text_node.text_type == "text":
-#         return (LeafNode(None, text_node.text, text_node.url))
-#     if text_node.text_type == "bold":
-#         return(LeafNode("b", text_node.text, text_node.url))
-#     if text_node.text_type == "italic":
-#         return(LeafNode("i", text_node.text, text_node.url))
-#     if text_node.text_type == "code":
-#         return(LeafNode("code", text_node.text, text_node.url))
-#     if text_node.text_type == "link":
-#         return(LeafNode("a", text_node.text, {"href": text_node.url}))
-#     if text_node.text_type == "image":
-#         return (LeafNode("img", "", {"src": text_node.url, "alt": text_node.text}))
-#     raise Exception("type passed into textnode not valid")
-
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
