@@ -1,5 +1,6 @@
 from textnode import TextNode
 from htmlnode import ParentNode
+from reg_extract import extract_markdown_images, extract_markdown_links
 
 delimiter_to_type = {
     "**": "bold",
@@ -44,7 +45,6 @@ def get_textnode_list(node):
     returned_array = list(filter(lambda x: x.text !="" and x.text!=" ", flattened_array))
     return returned_array
 
-
 def split_nodes_delimiter(old_nodes):
     returned_nodes = []
     for node in old_nodes:
@@ -54,7 +54,36 @@ def split_nodes_delimiter(old_nodes):
             returned_nodes.extend(get_textnode_list(node))
     return returned_nodes
 
-node = TextNode("**This** *is* some `text`", "text")
+def split_nodes_image(old_nodes):
+    print("Old nodes: ", old_nodes)
+    returned_nodes = []
+    for value in old_nodes:
+        if not isinstance(value, TextNode):
+            returned_nodes.append(value)
+        else:
+            extracted_tups = extract_markdown_images(value.text)
+            if len(extracted_tups) == 0:
+                # this would mean that the regex couldn't find anymore
+                returned_nodes.append(value)
+            else:
+                tuple = extracted_tups[0]
+                tup_delimiter = f"![{tuple[0]}]({tuple[1]})"
+                text_split = value.text.split(tup_delimiter, 1)
+                if text_split[0] == "":
+                    returned_nodes.append(TextNode(tuple[1], "image"))
+                    returned_nodes.extend(flatten_array(split_nodes_image([TextNode(text_split[1], "text")])))
+                else:
+                    returned_nodes.append(TextNode(text_split[0], "text"))
+                    returned_nodes.append(TextNode(tuple[1], "image"))
+                    returned_nodes.extend(flatten_array(split_nodes_image([TextNode(text_split[1], "text")])))
+    return returned_nodes
+    
+    
+
+node = TextNode(
+    "##Test text## ![image](http://www.google.com/image1.jpg) ##Here is some test text## ![another](http://www.google.com/image2.jpg)", "text")
 parentNode = ParentNode("div", [node], None)
+
+print(split_nodes_image([node, parentNode]))
 
 

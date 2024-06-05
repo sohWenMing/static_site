@@ -1,7 +1,7 @@
 import unittest
 from textnode import TextNode
 from htmlnode import ParentNode, LeafNode
-from split_node_delimiter import split_nodes_delimiter
+from split_node import split_nodes_delimiter
 
 textnode_right_delimiters = TextNode("`This` **should** *be* correct.", "text")
 textnode_another_right_delimiters = TextNode("The *quick* **brown** `fox` jumped over the `lazy` dog.", "text")
