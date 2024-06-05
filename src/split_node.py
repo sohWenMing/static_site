@@ -71,17 +71,17 @@ def split_nodes_image(old_nodes):
                 text_split = value.text.split(tup_delimiter, 1)
                 if text_split[0] == "":
                     returned_nodes.append(TextNode(tuple[1], "image"))
-                    returned_nodes.extend(flatten_array(split_nodes_image([TextNode(text_split[1], "text")])))
                 else:
                     returned_nodes.append(TextNode(text_split[0], "text"))
                     returned_nodes.append(TextNode(tuple[1], "image"))
+                if text_split[1] != "":
                     returned_nodes.extend(flatten_array(split_nodes_image([TextNode(text_split[1], "text")])))
     return returned_nodes
     
     
 
 node = TextNode(
-    "##Test text## ![image](http://www.google.com/image1.jpg) ##Here is some test text## ![another](http://www.google.com/image2.jpg)", "text")
+    "##Test text## ![image](http://www.google.com/image1.jpg) ##Here is some test text## ![another](http://www.google.com/image2.jpg) ##more text## ___", "text")
 parentNode = ParentNode("div", [node], None)
 
 print(split_nodes_image([node, parentNode]))
