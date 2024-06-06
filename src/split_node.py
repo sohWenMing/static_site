@@ -83,14 +83,14 @@ def split_nodes_image_or_links(old_nodes, extractor):
                 tuple = extracted_tups[0]
                 extractor_name, tup_delimiter = get_tuple_delimiter(extractor, tuple[0], tuple[1])
                 text_split = value.text.split(tup_delimiter, 1)
-                print("text split: ", text_split)
+                # print("text split: ", text_split)
                 if text_split[0] == "":
                     returned_nodes.append(TextNode(tuple[1], get_tag(extractor_name)))
                 else:
                     returned_nodes.append(TextNode(text_split[0], "text"))
                     returned_nodes.append(TextNode(tuple[1], get_tag(extractor_name)))
                 if len(text_split) > 1:
-                    print("text after split: ", text_split)
+                    # print("text after split: ", text_split)
                     if text_split[1] != "":
                         returned_nodes.extend(flatten_array(split_nodes_image_or_links([TextNode(text_split[1], "text")], extractor)))
     return returned_nodes
@@ -102,6 +102,6 @@ node = TextNode(
 parentNode = ParentNode("div", [node], None)
 
 # print(split_nodes_image([node, parentNode], extract_markdown_images))
-print(split_nodes_image_or_links([node, parentNode], extract_markdown_links))
+# print(split_nodes_image_or_links([node, parentNode], extract_markdown_links))
 
 
