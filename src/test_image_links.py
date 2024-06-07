@@ -64,17 +64,10 @@ class ImageLinksTest(unittest.TestCase):
         nodes = split_node_images([textnode_no_tags])
         self.assertEqual(nodes, [textnode_no_tags])
 
-    def test_no_link(self):
-        nodes = split_node_links([textnode_no_tags])
-        self.assertEqual(nodes, [textnode_no_tags])
 
     def test_one_image(self):
         nodes = split_node_images([image_text_node])
         self.assertEqual(nodes, [image_test_textnode])
-
-    def test_one_link(self):
-        nodes = split_node_links([link_text_node])
-        self.assertEqual(nodes, [link_test_textnode])
 
     def test_image_front(self):
         for text in text_tests:
@@ -92,8 +85,8 @@ class ImageLinksTest(unittest.TestCase):
             self.assertEqual(nodes, [TextNode(tuple[0], "text"), image_test_textnode, TextNode(tuple[1], "text")])
     
     def test_two_textnode_images(self):
-        list = [image_text_node, image_text_node]
-        nodes = get_nodes_multiple_nodes(list, split_node_images)
+        textnodes = [image_text_node, image_text_node]
+        nodes = get_nodes_multiple_nodes(textnodes, split_node_images)
         self.assertEqual(nodes, [image_test_textnode, image_test_textnode])
     
     def test_textnode_front_image_textnode_end(self):
@@ -101,9 +94,8 @@ class ImageLinksTest(unittest.TestCase):
         nodes = get_nodes_multiple_nodes(list, split_node_images)
         self.assertEqual(nodes, [textnode_no_tags, image_test_textnode])
 
-    def test(self):
+    def test_nested_image_nodes(self):
         nodes = generate_nested_node_tag_leading(textnode_no_tags)(image_text)
-        print(nodes)
         cleaned_nodes = get_nodes_multiple_nodes(nodes, split_node_images)
         expected = [textnode_no_tags]
         for tuple in text_test_tuples:
@@ -113,6 +105,54 @@ class ImageLinksTest(unittest.TestCase):
             text_nodes.append(TextNode(tuple[1], "text"))
             expected.extend(text_nodes)
         self.assertEqual(cleaned_nodes, expected)
+
+    def test_no_link(self):
+        nodes = split_node_links([textnode_no_tags])
+        self.assertEqual(nodes, [textnode_no_tags])
+    
+    def test_one_link(self):
+        nodes = split_node_links([link_text_node])
+        self.assertEqual(nodes, [link_test_textnode])
+
+    def test_link_front(self):
+        for text in text_tests:
+            nodes = get_nodes_one_textnode(link_text + text, split_node_links)
+            self.assertEqual(nodes, [link_test_textnode, TextNode(text, "text")])
+
+    def test_link_middle(self):
+        for tuple in text_test_tuples:
+            nodes = get_nodes_one_textnode(tuple[0] + link_text + tuple[1], split_node_links)
+            self.assertEqual(nodes, [TextNode(tuple[0], "text"), link_test_textnode, TextNode(tuple[1], "text")])
+
+    def test_link_end(self):
+        for text in text_tests:
+            nodes = get_nodes_one_textnode(text + link_text, split_node_links)
+            self.assertEqual(nodes, [TextNode(text, "text"), link_test_textnode])
+
+    def test_two_textnode_links(self):
+        textnodes = [link_text_node, link_text_node]
+        nodes = get_nodes_multiple_nodes(textnodes, split_node_links)
+        self.assertEqual(nodes, [link_test_textnode, link_test_textnode])
+
+    def test_textnode_front_link_textnode_end(self):
+        textnodes = [textnode_no_tags, link_test_textnode]
+        nodes = get_nodes_multiple_nodes(textnodes, split_node_links)
+        self.assertEqual(nodes, [textnode_no_tags, link_test_textnode])
+    
+    def test_nested_link_nodes(self):
+        nodes = generate_nested_node_tag_leading(textnode_no_tags)(link_text)
+        cleaned_nodes = get_nodes_multiple_nodes(nodes, split_node_links)
+        expected = [textnode_no_tags]
+        for tuple in text_test_tuples:
+            text_nodes = []
+            text_nodes.append(TextNode(tuple[0], "text"))
+            text_nodes.append(link_test_textnode)
+            text_nodes.append(TextNode(tuple[1], "text"))
+            expected.extend(text_nodes)
+        self.assertEqual(cleaned_nodes, expected)
+    
+
+
         
 
     
