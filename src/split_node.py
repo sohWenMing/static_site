@@ -1,22 +1,13 @@
 from textnode import TextNode
 from htmlnode import ParentNode
 from reg_extract import extract_markdown_images, extract_markdown_links
-from node_functions.helpers import get_func_name
+from node_functions.helpers import get_func_name, flatten_array
 
 delimiter_to_type = {
     "**": "bold",
     "*": "italic",
     "`": "code"
 }
-
-def flatten_array(array):
-    flat_array = []
-    for value in array:
-        if isinstance(value, list):
-            flat_array.extend(flatten_array(value))
-        else: 
-            flat_array.append(value)
-    return flat_array
 
 def split_nodes_text(node, delimiter):
     split_list = node.text.split(delimiter)
@@ -66,10 +57,11 @@ def get_tuple_delimiter(extractor, tup_index_1, tup_index_2):
 def get_tag(extractor_name):
     if extractor_name != "extract_markdown_images" and extractor_name != "extract_markdown_links":
         raise Exception("Extractor must be \"extract_markdown_images\" or \"extract_markdown_links\"")
-    return "image" if extractor_name == "extract_markdown_images" else "links"
+    return "image" if extractor_name == "extract_markdown_images" else "link"
 
 def split_nodes_image_or_links(old_nodes, extractor):
     extractor_name = get_func_name(extractor)
+    tag = get_tag(extractor_name)
     returned_nodes = []
     for value in old_nodes:
         if not isinstance(value, TextNode):
@@ -85,23 +77,33 @@ def split_nodes_image_or_links(old_nodes, extractor):
                 text_split = value.text.split(tup_delimiter, 1)
                 # print("text split: ", text_split)
                 if text_split[0] == "":
-                    returned_nodes.append(TextNode(tuple[1], get_tag(extractor_name)))
+                    returned_nodes.append(TextNode(tuple[0], tag, tuple[1]))
+                        
                 else:
                     returned_nodes.append(TextNode(text_split[0], "text"))
-                    returned_nodes.append(TextNode(tuple[1], get_tag(extractor_name)))
+                    returned_nodes.append(TextNode(tuple[0], tag, tuple[1]))
+
+                    
                 if len(text_split) > 1:
                     # print("text after split: ", text_split)
                     if text_split[1] != "":
                         returned_nodes.extend(flatten_array(split_nodes_image_or_links([TextNode(text_split[1], "text")], extractor)))
     return returned_nodes
+
+def split_node_images(old_nodes):
+    return split_nodes_image_or_links(old_nodes, extract_markdown_images)
+
+def split_node_links(old_nodes):
+    return split_nodes_image_or_links(old_nodes, extract_markdown_links)
     
     
 
 node = TextNode(
-    "##Test text## [image](http://www.google.com/image1.jpg) ##Here is some test text## [another](http://www.google.com/image2.jpg) ##more text## ___", "text")
-parentNode = ParentNode("div", [node], None)
+    "##Test text## ![text captured in tag](http://www.google.com/image1.jpg) ##Here is some test text## ![text captured in tag](http://www.google.com/image2.jpg) ##more text## ___", "text")
+# parentNode = ParentNode("div", [node], None)
+# print(split_node_images([node]))
 
-# print(split_nodes_image([node, parentNode], extract_markdown_images))
+# print(split_node_images([node, parentNode]))
 # print(split_nodes_image_or_links([node, parentNode], extract_markdown_links))
 
 
