@@ -179,7 +179,7 @@ class ImageLinksTest(unittest.TestCase):
                     text_nodes.append(link_test_textnode)
                 text_nodes.append(TextNode(tuple[1], "text"))
             test_check_nodes.extend(text_nodes)
-            print(test_check_nodes)
+            
             
         
         generate_test_nodes(image_text_node)

@@ -37,15 +37,6 @@ def get_textnode_list(node):
     returned_array = list(filter(lambda x: x.text !="" and x.text!=" ", flattened_array))
     return returned_array
 
-def split_nodes_delimiter(old_nodes):
-    returned_nodes = []
-    for node in old_nodes:
-        if isinstance(node, TextNode) == False:
-            returned_nodes.append(node)
-        else:
-            returned_nodes.extend(get_textnode_list(node))
-    return returned_nodes
-
 def get_tuple_delimiter(extractor, tup_index_1, tup_index_2):
     extractor_name = get_func_name(extractor)
     if extractor_name != "extract_markdown_images" and extractor_name != "extract_markdown_links":
@@ -90,6 +81,15 @@ def split_nodes_image_or_links(old_nodes, extractor):
                         returned_nodes.extend(flatten_array(split_nodes_image_or_links([TextNode(text_split[1], "text")], extractor)))
     return returned_nodes
 
+def split_nodes_delimiter(old_nodes):
+    returned_nodes = []
+    for node in old_nodes:
+        if isinstance(node, TextNode) == False:
+            returned_nodes.append(node)
+        else:
+            returned_nodes.extend(get_textnode_list(node))
+    return returned_nodes
+
 def split_node_images(old_nodes):
     return split_nodes_image_or_links(old_nodes, extract_markdown_images)
 
@@ -97,13 +97,4 @@ def split_node_links(old_nodes):
     return split_nodes_image_or_links(old_nodes, extract_markdown_links)
     
     
-
-node = TextNode(
-    "##Test text## ![text captured in tag](http://www.google.com/image1.jpg) ##Here is some test text## ![text captured in tag](http://www.google.com/image2.jpg) ##more text## ___", "text")
-# parentNode = ParentNode("div", [node], None)
-# print(split_node_images([node]))
-
-# print(split_node_images([node, parentNode]))
-# print(split_nodes_image_or_links([node, parentNode], extract_markdown_links))
-
-
+ 
