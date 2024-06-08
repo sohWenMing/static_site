@@ -151,7 +151,49 @@ class ImageLinksTest(unittest.TestCase):
             expected.extend(text_nodes)
         self.assertEqual(cleaned_nodes, expected)
     
+    def test_image_link_nodes(self):
+        nodes = [image_text_node, link_text_node]
+        returned_nodes = split_node_images(split_node_links(nodes))
+        self.assertEqual(returned_nodes, [image_test_textnode, link_test_textnode])
 
+    def test_link_image_nodes(self):
+        nodes = [link_text_node, image_text_node]
+        returned_nodes = split_node_images(split_node_links(nodes))
+        self.assertEqual(returned_nodes, [link_test_textnode, image_test_textnode])
+
+    def test_full_test(self):
+        nodes = generate_nested_node_tag_leading(textnode_no_tags)(image_text)
+        nodes.extend(generate_nested_node_tag_leading(textnode_no_tags)(link_text))
+        returned_nodes = split_node_images(split_node_links(nodes))
+        # print("returned_nodes:", returned_nodes)
+        test_check_nodes = []
+                     
+        def generate_test_nodes(textnode):
+            test_check_nodes.append(textnode_no_tags)
+            text_nodes = []
+            for tuple in text_test_tuples: 
+                text_nodes.append(TextNode(tuple[0], "text"))
+                if textnode == image_text_node:
+                    text_nodes.append(image_test_textnode)
+                else:
+                    text_nodes.append(link_test_textnode)
+                text_nodes.append(TextNode(tuple[1], "text"))
+            test_check_nodes.extend(text_nodes)
+            print(test_check_nodes)
+            
+        
+        generate_test_nodes(image_text_node)
+        generate_test_nodes(link_text_node)
+
+        self.assertEqual(returned_nodes, test_check_nodes)
+
+
+        # self.assertEqual(test_check_nodes, returned_nodes)
+
+        
+       
+
+        
 
         
 
