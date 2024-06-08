@@ -2,7 +2,7 @@ from textnode import TextNode
 from htmlnode import ParentNode
 from reg_extract import extract_markdown_images, extract_markdown_links
 from node_functions.helpers import get_func_name, flatten_array
-
+####################HELPERS##################
 delimiter_to_type = {
     "**": "bold",
     "*": "italic",
@@ -80,7 +80,9 @@ def split_nodes_image_or_links(old_nodes, extractor):
                     if text_split[1] != "":
                         returned_nodes.extend(flatten_array(split_nodes_image_or_links([TextNode(text_split[1], "text")], extractor)))
     return returned_nodes
+####################HELPERS###################
 
+####################FUNCTION EXPORTS##########
 def split_nodes_delimiter(old_nodes):
     returned_nodes = []
     for node in old_nodes:
@@ -95,6 +97,10 @@ def split_node_images(old_nodes):
 
 def split_node_links(old_nodes):
     return split_nodes_image_or_links(old_nodes, extract_markdown_links)
+
+def text_to_textnodes(text):
+    textnode = TextNode(text, "text")
+    return split_node_links(split_node_images(split_nodes_delimiter([textnode])))
     
     
  
