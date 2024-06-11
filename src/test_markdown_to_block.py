@@ -1,5 +1,5 @@
 import unittest
-from markdown_to_block import markdown_to_block
+from markdown_to_block import markdown_to_blocks
 import textwrap
 
 heading = "# this is a heading"
@@ -18,32 +18,32 @@ def print_result(result):
 class TestMarkDownToBlock(unittest.TestCase):
     def test_basic(self):
         test_text = heading + newline + newline + paragraph + newline + list_item + newline + list_item 
-        result = markdown_to_block(test_text)
+        result = markdown_to_blocks(test_text)
         # print_result(result)
         self.assertEqual(result, [heading, paragraph + newline + list_item + newline + list_item])
     
     def test_exception(self):
         with self.assertRaises(ValueError):
-            markdown_to_block(3)
+            markdown_to_blocks(3)
 
     def test_basic(self):
         test_text = newline + newline
-        result = markdown_to_block(test_text)
+        result = markdown_to_blocks(test_text)
         self.assertEqual(result, [])
     
     def test_spaces(self):
         test_text = space + heading + space + newline + newline + paragraph
-        result = markdown_to_block(test_text)
+        result = markdown_to_blocks(test_text)
         self.assertEqual(result, [heading, paragraph])
     
     def test_nullspace(self):
         test_text = space + newline + space
-        result = markdown_to_block(test_text)
+        result = markdown_to_blocks(test_text)
         self.assertEqual(result, [])
 
     def test_multiple_newlines(self):
         test_text = newline + heading + newline*40 + paragraph + newline + list_item + newline + list_item
-        result = markdown_to_block(test_text)
+        result = markdown_to_blocks(test_text)
         # print_result(result)
         self.assertEqual(result, [heading, paragraph + newline + list_item + newline + list_item])
 
@@ -58,7 +58,7 @@ class TestMarkDownToBlock(unittest.TestCase):
             * with items             
         """)
 
-        result = markdown_to_block(markdown)
+        result = markdown_to_blocks(markdown)
         self.assertEqual(result, ["This is **bolded** paragraph", "This is another paragraph with *italic* text and `code` here\n    This is the same paragraph on a new line", "* This is a list\n    * with items"])
 
     def test_mixed_elements(self):
@@ -70,7 +70,7 @@ class TestMarkDownToBlock(unittest.TestCase):
             "* List item 2",
             "End paragraph with `code`.\nAnother line in the same paragraph."
         ]
-        result = markdown_to_block(markdown)
+        result = markdown_to_blocks(markdown)
         self.assertEqual(result, expected)
 
     def test_nested_lists(self):
@@ -82,5 +82,5 @@ class TestMarkDownToBlock(unittest.TestCase):
             "- Bullet 1\n- Bullet 2\n  - Sub-bullet 1\n  - Sub-bullet 2",
             "Another paragraph."
         ]
-        result = markdown_to_block(markdown)
+        result = markdown_to_blocks(markdown)
         self.assertEqual(result, expected)
