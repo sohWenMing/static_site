@@ -28,7 +28,7 @@ def check_ordered_list(block):
             return False
     return True
 
-def markdown_to_block(text):
+def markdown_to_blocks(text):
     if not isinstance(text, str):
         raise ValueError("input to markdown_to_block function must be a string")
     if len(text) == 0:
@@ -44,31 +44,29 @@ def markdown_to_block(text):
     return return_list
 
 def block_to_block_type(block):
-    if not isinstance(block, list) or list(filter(lambda x: not isinstance(x, str), block)) != []:
-        raise ValueError("block must be a list of strings")
+    if not isinstance(block, str):
+        raise ValueError("block must be a string")
     
-    if regex_match(r"^\#{1,6} .*", block[0]):
+    block_strings = block.split("\n")
+    
+    if regex_match(r"^\#{1,6} .*", block_strings[0]):
         return block_types["block_type_heading"]
         
-    if regex_match(r"^```.*", block[0]) and regex_match(r".*```$", block[-1]):
+    if regex_match(r"^```.*", block_strings[0]) and regex_match(r".*```$", block_strings[-1]):
         return block_types["block_type_code"]
     
-    if regex_match_block_list(r"^>.*", block):
+    if regex_match_block_list(r"^>.*", block_strings):
         return block_types["block_type_quote"]
 
-    if regex_match_block_list(r"^[*-] .*", block):
+    if regex_match_block_list(r"^[*-] .*", block_strings):
         return block_types["block_type_unordered_list"]
     
-    if check_ordered_list(block):
+    if check_ordered_list(block_strings):
         return block_types["block_type_ordered_list"]
     
     return block_types["block_type_paragraph"]
 
 
-
-        
-    
-print(block_to_block_type(["A. one", "2. two"]))
 
 
 
