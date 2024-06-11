@@ -34,6 +34,24 @@ def generate_unordered_list(num_lines, with_space=True):
             text_string += f"*This is line {i}\n"
     return text_string
 
+def generate_ordered_list(num_lines):
+    text_string = ""
+    for i in range(1, num_lines + 1):
+        text_string += f"{str(i)}. This is line {i}\n"
+    return text_string
+
+def generate_ordered_list_wrong_order(num_lines):
+    text_string = ""
+    for i in range(1, num_lines + 1, 2):
+        text_string += f"{str(i)}. This is a line\n"
+    return text_string
+
+def generate_ordered_list_no_space(num_lines):
+    text_string = ""
+    for i in range(1, num_lines + 1):
+        text_string += f"{str(i)}.This is line {str(i)}\n"
+    return text_string
+
 class TestBlockToBlockType(unittest.TestCase):
     def test_heading_basic(self):
         for i in range(1, 7):
@@ -84,6 +102,40 @@ class TestBlockToBlockType(unittest.TestCase):
         self.assertEqual(len(generated_blocks), 2)
         self.assertEqual(block_to_block_type(generated_blocks[0]), "unordered_list")
         self.assertEqual(block_to_block_type(generated_blocks[1]), "paragraph")
+
+    def test_ordered_lists(self):
+        generated_blocks = markdown_to_blocks(generate_ordered_list(7) + block_break + generate_ordered_list_wrong_order(7) + block_break + generate_ordered_list_no_space(7))
+        self.assertEqual(block_to_block_type(generated_blocks[0]), "ordered_list")
+        for i in range(1, len(generated_blocks)):
+            self.assertEqual(block_to_block_type(generated_blocks[i]), "paragraph")
+
+    def test_all(self):
+        generated_blocks = markdown_to_blocks(
+            generate_heading_text(3) 
+            + block_break 
+            + code_block_one 
+            + block_break 
+            + code_block_two
+            + block_break
+            + generate_quote(7)
+            + block_break
+            + generate_unordered_list(7)
+            + block_break
+            + generate_ordered_list(7)
+            + block_break
+            + generate_ordered_list_wrong_order(7)
+        )
+        self.assertEqual(len(generated_blocks), 7)
+        self.assertEqual(block_to_block_type(generated_blocks[0]), "heading")
+        self.assertEqual(block_to_block_type(generated_blocks[1]), "code")
+        self.assertEqual(block_to_block_type(generated_blocks[2]), "code")
+        self.assertEqual(block_to_block_type(generated_blocks[3]), "quote")
+        self.assertEqual(block_to_block_type(generated_blocks[4]), "unordered_list")
+        self.assertEqual(block_to_block_type(generated_blocks[5]), "ordered_list")
+        self.assertEqual(block_to_block_type(generated_blocks[6]), "paragraph")
+
+
+
 
     
 
