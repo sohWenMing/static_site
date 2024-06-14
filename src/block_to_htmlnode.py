@@ -2,17 +2,6 @@ import re
 from htmlnode import ParentNode
 from split_node import text_to_textnodes
 
-
-def heading_to_htmlnode(string):
-    regex = r"^\#{1,6} "
-    cleaned_string = re.sub(regex, "", string)
-    children = text_to_textnodes(cleaned_string)
-    textnodes_to_html_nodes = []
-    for child in children:
-        textnodes_to_html_nodes.append(child.text_node_to_html_node())
-    node = ParentNode("heading", textnodes_to_html_nodes)
-    return node
-
 def quote_to_htmlnode(string):
     lines = string.split("\n")
     cleaned_lines = []
@@ -64,13 +53,13 @@ def code_to_htmlnode(string):
         textnodes_to_html_nodes.append(child.text_node_to_html_node())
     code_node = ParentNode("code", textnodes_to_html_nodes)
     pre_code_node = ParentNode("pre", [code_node])
-    print(pre_code_node.to_html())
+    return pre_code_node
 
 def heading_to_htmlnode(string):
-    heading = re.findall(r"^#{1,6}", string)
-    heading_number = len(heading[0])
+    heading = re.findall(r"^#{1,6} ", string)
+    heading_number = len(heading[0].strip())
     tag = f"h{heading_number}"
-    cleaned_string = re.sub(r"^#{1,6}", "", string)
+    cleaned_string = re.sub(r"^#{1,6} ", "", string)
     children = text_to_textnodes(cleaned_string)
     textnodes_to_html_nodes = []
     for child in children:
@@ -86,8 +75,6 @@ def paragraph_to_htmlnode(string):
     node = ParentNode("p", textnodes_to_html_nodes)
     return node
 
-string = "this is a paragraph"
 
-print(paragraph_to_htmlnode(string).to_html())
 
     

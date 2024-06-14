@@ -12,7 +12,7 @@ from node_functions.helpers import regex_match, regex_match_block_list
 def check_ordered_list(block):
     list_nums = []
     for line in block:
-        if not regex_match(r"^\d\. ", line):
+        if not regex_match(r"^\d .*", line):
             return False
         if len(line) == 0:
             list_nums.append(None)
