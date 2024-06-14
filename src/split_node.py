@@ -100,7 +100,8 @@ def split_node_links(old_nodes):
 
 def text_to_textnodes(text):
     textnode = TextNode(text, "text")
-    return split_node_links(split_node_images(split_nodes_delimiter([textnode])))
+    nodes = split_node_links(split_node_images(split_nodes_delimiter([textnode])))
+    return nodes
     
     
  

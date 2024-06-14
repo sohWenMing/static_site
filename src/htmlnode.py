@@ -18,6 +18,14 @@ class HTMLNode:
     
     def __repr__(self):
         return f"Tag: {self.tag} Value: {self.value} Children: {self.children} Props: {self.props}" 
+    
+    def __eq__(self, other):
+        if not isinstance(self, HTMLNode):
+            return NotImplemented
+        return (self.tag == other.tag and 
+                self.value == other.value and 
+                self.children == other.children and
+                self.value == other.value)
 
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
